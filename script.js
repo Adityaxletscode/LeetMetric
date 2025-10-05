@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const ranking = document.querySelector(".rank");
   const circles = document.querySelectorAll(".circle");
 
-  const backendUrl = "https://leetcode-proxy-new.onrender.com/leetcode";
+  const backendUrl = "https://leetmetric-chpy.onrender.com/leetcode";
 
   function validateUsername(username) {
     if (username.trim() === "") {

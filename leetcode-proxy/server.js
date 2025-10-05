@@ -3,11 +3,22 @@ import fetch from "node-fetch";
 import cors from "cors";
 
 const app = express();
-app.use(cors());
+
+// Allow requests from your GitHub Pages domain
+app.use(
+  cors({
+    origin: "https://adityaxletscode.github.io",
+  })
+);
+
 app.use(express.json());
 
 app.post("/leetcode", async (req, res) => {
   const { username } = req.body;
+
+  if (!username || username.trim() === "") {
+    return res.status(400).json({ error: "Username is required" });
+  }
 
   const graphqlQuery = {
     query: `
@@ -45,10 +56,17 @@ app.post("/leetcode", async (req, res) => {
       body: JSON.stringify(graphqlQuery),
     });
 
+    if (!response.ok) {
+      throw new Error(`LeetCode API responded with status ${response.status}`);
+    }
+
     const data = await response.json();
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: "Proxy failed", details: error.message });
+    console.error("Error fetching LeetCode data:", error.message);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch LeetCode data", details: error.message });
   }
 });
 

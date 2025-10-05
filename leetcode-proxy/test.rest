@@ -1,4 +1,4 @@
-POST http://localhost:5000/leetcode
+POST https://leetmetric-chpy.onrender.com/leetcode
 Content-Type: application/json
 
 {
