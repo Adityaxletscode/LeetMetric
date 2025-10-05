@@ -14,18 +14,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const ranking = document.querySelector(".rank");
   const circles = document.querySelectorAll(".circle");
 
-  const backendUrl = "http://localhost:5000/leetcode";
+  const backendUrl = "https://leetcode-proxy-new.onrender.com/leetcode";
 
   function validateUsername(username) {
     if (username.trim() === "") {
+      error.textContent = "Username cannot be empty!";
       error.style.display = "block";
       hideCircles();
       hideRank();
       return false;
     }
     const regex = /^(?!.*__)[a-zA-Z0-9](?!.*_$)[a-zA-Z0-9_]{1,14}[a-zA-Z0-9]$/;
-    const isMatching = regex.test(username);
-    if (!isMatching) {
+    if (!regex.test(username)) {
+      error.textContent = "Invalid username format!";
       error.style.display = "block";
       hideCircles();
       hideRank();
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     error.style.display = "none";
     showCircles();
     showRank();
-    return isMatching;
+    return true;
   }
 
   async function fetchUserDetails(username) {
@@ -48,15 +49,19 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ username }),
       });
 
-      if (!response.ok) {
-        throw new Error("Unable to fetch user details");
-      }
+      if (!response.ok) throw new Error("Unable to fetch user details");
 
       const parsedata = await response.json();
-      console.log("User Data:", parsedata);
+
+      if (!parsedata.data.matchedUser) {
+        stats.innerHTML = '<p class="notFound">User not found!</p>';
+        hideRank();
+        return;
+      }
+
       displayUserData(parsedata);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       stats.innerHTML = '<p class="notFound">No Data Found</p>';
       hideRank();
     } finally {
@@ -117,35 +122,25 @@ document.addEventListener("DOMContentLoaded", function () {
   function hideCircles() {
     circles.forEach((circle) => (circle.style.display = "none"));
   }
-
   function showCircles() {
     circles.forEach((circle) => (circle.style.display = "flex"));
   }
-
   function hideRank() {
     ranking.style.display = "none";
   }
-
   function showRank() {
     ranking.style.display = "flex";
   }
 
-  // 🔹 Search button click
   searchButton.addEventListener("click", function () {
     const username = usernameInput.value;
-    console.log("Username:", username);
-    if (validateUsername(username)) {
-      fetchUserDetails(username);
-    }
+    if (validateUsername(username)) fetchUserDetails(username);
   });
 
   usernameInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       const username = usernameInput.value;
-      console.log("Username (Enter pressed):", username);
-      if (validateUsername(username)) {
-        fetchUserDetails(username);
-      }
+      if (validateUsername(username)) fetchUserDetails(username);
     }
   });
 });

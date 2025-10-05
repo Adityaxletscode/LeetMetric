@@ -6,7 +6,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Proxy route
 app.post("/leetcode", async (req, res) => {
   const { username } = req.body;
 
