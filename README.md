@@ -7,7 +7,6 @@ It displays progress using interactive charts on the frontend and retrieves real
 
 ## 📸 Screenshot
 
-*(Add your image file in the repo and update the path below)*
 
 ![LeetMetric Screenshot](./leetmetric.png)
 
